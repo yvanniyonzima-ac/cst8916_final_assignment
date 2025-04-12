@@ -14,6 +14,8 @@ This designs and implement a real-time monitoring system using simulated IoT sen
 
 ## 2. System Architecture
 
+![Canal IoT Sensors System Architecture](https://github.com/user-attachments/assets/df4be829-ecb2-4ea9-b6e3-3a3fbe335c68)
+
 ## 3. Implementation Details
 
 ### IoT Sensor Simulation and Transmition
