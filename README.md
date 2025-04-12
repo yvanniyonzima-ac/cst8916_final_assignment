@@ -161,13 +161,13 @@ All sensor simulation scripts are running. Press Ctrl+C to stop them...
 
 4. Fill out the basic information:
 
-- Subscription: *Azure for Students*
+    - Subscription: *Azure for Students*
 
-- Resource group: Create or select one (*CANAL-SENSOR-ANALYTICS*)
+    - Resource group: Create or select one (*CANAL-SENSOR-ANALYTICS*)
 
-- Region: *Canada Central*
+    - Region: *Canada Central*
 
-- IoT Hub Name: *rideau-canal-iot-hub*
+    - IoT Hub Name: *rideau-canal-iot-hub*
 
 5. Click Review + Create, then Create
 
@@ -182,9 +182,9 @@ This is good for testing and development environments, such as our simulation.
 
 3. Fill out the information:
 
-- Device ID: e.g., nac_sensor
+    - Device ID: e.g., nac_sensor
 
-- Leave the rest of the configuration to their default values
+    - Leave the rest of the configuration to their default values
 
 4. Click Save
 
@@ -204,15 +204,15 @@ This is good for testing and development environments, such as our simulation.
 
 4. Fill out the basic information:
 
-- Subscription: *Azure for Students*
+    - Subscription: *Azure for Students*
 
-- Resource group: Select *CANAL-SENSOR-ANALYTICS*
+    - Resource group: Select *CANAL-SENSOR-ANALYTICS*
 
-- Name: *dows-lake-sensor-stream*
+    - Name: *dows-lake-sensor-stream*
 
-- Region: *Canada Central*
+    - Region: *Canada Central*
 
-- Hosting Environment: *Cloud*
+    - Hosting Environment: *Cloud*
 
 5. Click Review + Create, then Create
 
@@ -255,7 +255,7 @@ GROUP BY
 ## 5. Results
 
 - Highlight key findings, such as:
-- - Aggregated data outputs (e.g., average ice thickness).
+    - Aggregated data outputs (e.g., average ice thickness).
 - Include references to sample output files stored in Blob Storage.
 
 ## 6. Reflection
