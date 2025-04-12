@@ -3,7 +3,7 @@ import random
 from datetime import datetime, timezone
 from azure.iot.device import IoTHubDeviceClient, Message
 
-CONNECTION_STRING = "Your IoT Hub device connection string here"
+CONNECTION_STRING = "HostName=rideau-canal-iot-hub.azure-devices.net;DeviceId=nac_sensor;SharedAccessKey=k5NI7RRPMncg7w/TfM3xLwxPNad0GZ0XWHwKstTKA3s="
 
 def get_telemetry():
     return {

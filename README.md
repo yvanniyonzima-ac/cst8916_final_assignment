@@ -22,7 +22,7 @@ There are 3 scripts that simulate an IoT sensor along the Rideau Canal Skateway
 - **Downs Lake** : ```dows_lake_sensor.py```
 - **Fifth Avenue**: ```fifth_avenue_sensor.py```
 - **NAC**: ```nac_sensor.py```
-Each scripts generates telemetry data every seconds and sends it to **Azure IoT Hub** using the Azure IoT Device SDK.
+Each scripts generates telemetry data every 10 seconds and sends it to **Azure IoT Hub** using the Azure IoT Device SDK.
 The 3 scripts are lauched and managed by the ```run_sensor_simulation.py``` script.
 
 #### Key Functionalities
@@ -49,6 +49,18 @@ The `get_telemetry()` function creates a dictionary that mimics real sensor read
   "timestamp": "2025-04-10T15:23:50Z"
 }
 ```
+**Get telemetry function example for NAC sensor**
+```python
+def get_telemetry():
+    return {
+        "location": "NAC",
+        "iceThickness": random.uniform(20.0, 40.0),
+        "surfaceTemperature": random.uniform(-30,5),
+        "snowAccumulation": random.uniform(0.0,20.0),
+        "externalTemperature": random.uniform(-30,5),
+        "timestamp": datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    }
+```
 
 **2. Connecting to Azure IoT Hub**
 
@@ -56,10 +68,11 @@ The script uses the IoTHubDeviceClient from the azure.iot.device library to esta
 
 ```python
 client = IoTHubDeviceClient.create_from_connection_string(CONNECTION_STRING)
-#Note: CONNECTION_STRING is replaced with with the Azure IoT Hub device connection string.
+#Note: CONNECTION_STRING is replaced with with the Azure IoT Hub device connection string stored in a global variable.
 ```
 
 **3. Sending Telemetry Data**
+
 Within the main loop:
 
 - Telemetry is generated using get_telemetry().
@@ -74,9 +87,10 @@ Within the main loop:
 message = Message(str(telemetry))
 client.send_message(message)
 ```
-The loop repeats every seconds to continuously stream data.
+The loop repeats every 10 seconds to continuously stream data.
 
 **4. Graceful Shutdown**
+
 When Ctrl+C is pressed, or a terminate signal is received, the script catches a KeyboardInterrupt, stops the loop, and disconnects from the IoT Hub:
 
 ```python
@@ -87,8 +101,6 @@ finally:
 ```
 
 #### Sensor Simulation Manager Script
-
-
 
 This Python script is designed to **launch and manage multiple sensor simulation scripts** concurrently. It simplifies the process of starting and gracefully shutting down multiple simulated IoT sensors used in the Rideau Canal Skateway monitoring system.
 
@@ -135,3 +147,117 @@ Starting fifth_avenue_sensor.py...
 Starting nac_sensor.py...
 All sensor simulation scripts are running. Press Ctrl+C to stop them...
 ```
+
+### Azure IoT Hub Configuration
+
+- Explain the configuration steps for setting up the IoT Hub, including endpoints and message routing.
+
+#### Create an Azure IoT Hub
+1. Go to the Azure Portal
+
+2. Click “Create a resource”
+
+3. Search for IoT Hub and click Create
+
+4. Fill out the basic information:
+
+- Subscription: *Azure for Students*
+
+- Resource group: Create or select one (*CANAL-SENSOR-ANALYTICS*)
+
+- Region: *Canada Central*
+
+- IoT Hub Name: *rideau-canal-iot-hub*
+
+5. Click Review + Create, then Create
+
+In the networking tab, leave the default public access for the endpoint. This will allow us to connect to the IoT hub over the internet from any location (i.i. we will not need to set up a VNet).
+This is good for testing and development environments, such as our simulation.
+
+#### Register a Device
+
+1. Navigate to the left menu, under “Device”, click “Devices”
+
+2. Click Add Device
+
+3. Fill out the information:
+
+- Device ID: e.g., nac_sensor
+
+- Leave the rest of the configuration to their default values
+
+4. Click Save
+
+5. Repeat steps 1-4 for Fifth Avenue and Dow's Lake sensors
+
+6. After saving, click the device name to copy its Connection String to the appropriate python script
+
+### Azure Stream Analytics Job
+
+#### Create an Azure Stream Analytics job
+
+1. Go to the Azure Portal
+
+2. Click “Create a resource”
+
+3. Search for Stream  Analytics job and click Create
+
+4. Fill out the basic information:
+
+- Subscription: *Azure for Students*
+
+- Resource group: Select *CANAL-SENSOR-ANALYTICS*
+
+- Name: *dows-lake-sensor-stream*
+
+- Region: *Canada Central*
+
+- Hosting Environment: *Cloud*
+
+5. Click Review + Create, then Create
+
+#### Input and Output Destination
+
+#### Query used for data processing.
+
+```sql
+SELECT
+    IoTHub.ConnectionDeviceId AS DeviceID,
+    AVG(iceThickness) AS AvgIceThickness,
+    MAX(snowAccumulation) AS MaxSnowAccumulation,
+    System.Timestamp AS EventTime
+INTO
+    [canal-sensor-data-container]
+FROM
+    [rideau-canal-iot-hub]
+GROUP BY
+    IoTHub.ConnectionDeviceId, TumblingWindow(minute, 5)
+```
+
+### Azure Blob Storage
+
+- Explain how the processed data is organized in Blob Storage (e.g., folder structure, file naming convention).
+- Specify the formats of stored data (JSON/CSV).
+
+## 4. Usage Instructions
+
+### Running the IoT Sensor Simulation
+
+- Provide step-by-step instructions for running the simulation script or application.
+
+### Configuring Azure Services
+
+- Describe how to set up and run the IoT Hub and Stream Analytics job.
+
+### Accessing Stored Data
+- Include steps to locate and view the processed data in Azure Blob Storage.
+
+## 5. Results
+
+- Highlight key findings, such as:
+- - Aggregated data outputs (e.g., average ice thickness).
+- Include references to sample output files stored in Blob Storage.
+
+## 6. Reflection
+
+- Discuss any challenges faced during implementation and how they were addressed.
